@@ -5,18 +5,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.querySelector('.hero')) {
         animateStats();
     }
-
     if (document.querySelector('.team-grid')) {
         animateTeamCards();
     }
 
     if (document.querySelector('.tracks-table')) {
-        initTracksSearch();
+        initTableSearch('.tracks-table', '🔍 Search tracks or circuits...');
         initTracksSort();
     }
 
     if (document.querySelector('.reserve-table')) {
-        initReservesSearch();
+        initTableSearch('.reserve-table', '🔍 Search reserves by team, driver, or nationality...');
+    }
+
+    if (document.querySelector('.fulltime-table')) {
+        initTableSearch('.fulltime-table', '🔍 Search drivers, teams, or nationality...');
     }
 
     initBackToTop();
@@ -25,16 +28,25 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function highlightActiveNav() {
+    
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     const navLinks = document.querySelectorAll('nav a');
 
+    let hasActive = false;
+
     navLinks.forEach(link => {
-        const linkPage = link.getAttribute('href');
-        link.classList.remove('active');
-        if (linkPage === currentPage) {
+        const href = link.getAttribute('href');
+        if (href === currentPage) {
             link.classList.add('active');
+            hasActive = true;
+        } else if (link.classList.contains('active') && href !== currentPage) {
+            link.classList.remove('active');
         }
     });
+
+    if (!hasActive && navLinks.length > 0) {
+        navLinks[0].classList.add('active');
+    }
 }
 
 function animateStats() {
@@ -84,18 +96,20 @@ function animateTeamCards() {
     });
 }
 
-function initTracksSearch() {
-    const tables = document.querySelectorAll('.tracks-table');
+function initTableSearch(tableSelector, placeholder) {
+    const tables = document.querySelectorAll(tableSelector);
 
-    tables.forEach((table, index) => {
+    tables.forEach(table => {
+        if (table.parentElement.classList.contains('search-wrapper')) return;
+
         const wrapper = document.createElement('div');
         wrapper.className = 'search-wrapper';
 
         const input = document.createElement('input');
         input.type = 'text';
         input.className = 'search-input';
-        input.placeholder = '🔍 Search tracks or circuits...';
-        input.setAttribute('aria-label', 'Search tracks');
+        input.placeholder = placeholder;
+        input.setAttribute('aria-label', 'Search table');
 
         table.parentNode.insertBefore(wrapper, table);
         wrapper.appendChild(input);
@@ -121,6 +135,9 @@ function initTracksSort() {
 
         headers.forEach((header, colIndex) => {
             if (colIndex === headers.length - 1) return;
+
+            if (header.dataset.sortable === 'true') return;
+            header.dataset.sortable = 'true';
 
             header.style.cursor = 'pointer';
             header.title = 'Click to sort';
@@ -158,35 +175,10 @@ function initTracksSort() {
     });
 }
 
-function initReservesSearch() {
-    const table = document.querySelector('.reserve-table');
-    if (!table) return;
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'search-wrapper';
-
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'search-input';
-    input.placeholder = '🔍 Search reserves by team, driver, or nationality...';
-    input.setAttribute('aria-label', 'Search reserves');
-
-    table.parentNode.insertBefore(wrapper, table);
-    wrapper.appendChild(input);
-    wrapper.appendChild(table);
-
-    input.addEventListener('input', () => {
-        const query = input.value.toLowerCase().trim();
-        const rows = table.querySelectorAll('tbody tr');
-
-        rows.forEach(row => {
-            const text = row.textContent.toLowerCase();
-            row.style.display = text.includes(query) ? '' : 'none';
-        });
-    });
-}
-
 function initBackToTop() {
+
+    if (document.querySelector('.back-to-top')) return;
+
     const btn = document.createElement('button');
     btn.className = 'back-to-top';
     btn.innerHTML = '↑';
