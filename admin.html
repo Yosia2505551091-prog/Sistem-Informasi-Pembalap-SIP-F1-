@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Formula 1 2026 — Admin Dashboard</title>
+
+    <!-- Demo-only guard: bounce to the login page if there is no session flag -->
+    <script>
+        try {
+            if (!sessionStorage.getItem('f1-admin')) { window.location.replace('login.html'); }
+        } catch (e) { window.location.replace('login.html'); }
+    </script>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin.css">
+    <script src="admin.js" defer></script>
+</head>
+
+<body>
+    <header>
+        <nav class="nav-wide">
+            <a href="index.html">Main Page</a>
+            <a href="fulltime.html">Full Time Entries</a>
+            <a href="reserves.html">Reserves Entries</a>
+            <a href="tracks.html">Tracks</a>
+            <a href="admin.html" class="active">Admin</a>
+            <span class="nav-user" id="navUser"></span>
+            <button type="button" class="nav-btn" id="logoutBtn">Log out</button>
+        </nav>
+    </header>
+
+    <main class="admin">
+        <h1>🏎️ Admin dashboard</h1>
+        <p class="demo-note">Demo mode: edits last until you reload and don't change the public pages.</p>
+
+        <div class="tabs" role="tablist" aria-label="Driver lists">
+            <button type="button" class="tab" role="tab" id="tab-ft" data-kind="ft" aria-selected="true"
+                aria-controls="panel">Full time <span class="count" id="count-ft">0</span></button>
+            <button type="button" class="tab" role="tab" id="tab-res" data-kind="res" aria-selected="false"
+                aria-controls="panel" tabindex="-1">Reserves <span class="count" id="count-res">0</span></button>
+        </div>
+
+        <div class="toolbar">
+            <input type="text" class="search-input" id="search" placeholder="🔍 Search by name, number, team or nationality"
+                aria-label="Search drivers" autocomplete="off">
+            <select class="input team-filter" id="teamFilter" aria-label="Filter by team"></select>
+            <button type="button" class="btn-admin primary" id="addBtn">Add driver</button>
+        </div>
+
+        <div id="panel" role="tabpanel">
+            <div class="table-scroll" id="tableScroll">
+                <table class="admin-table">
+                    <thead id="thead"></thead>
+                    <tbody id="tbody"></tbody>
+                </table>
+            </div>
+            <div class="empty" id="empty" hidden>
+                <p id="emptyText"></p>
+                <button type="button" class="btn-admin" id="emptyAction">Clear search</button>
+            </div>
+        </div>
+
+        <p class="result-count" id="resultCount" aria-live="polite"></p>
+    </main>
+
+    <!-- Add / edit dialog -->
+    <dialog class="modal" id="driverDialog" aria-labelledby="driverDialogTitle">
+        <form id="driverForm" novalidate>
+            <div class="modal-head">
+                <h2 id="driverDialogTitle">Add driver</h2>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="f-no">Number</label>
+                        <input class="input" id="f-no" type="number" min="1" max="99" inputmode="numeric"
+                            aria-describedby="e-no">
+                        <p class="field-error" id="e-no"></p>
+                    </div>
+
+                    <div class="field">
+                        <label for="f-status">Status</label>
+                        <select class="input" id="f-status" aria-describedby="e-status"></select>
+                        <p class="field-error" id="e-status"></p>
+                    </div>
+
+                    <div class="field span-2">
+                        <label for="f-name">Driver name</label>
+                        <input class="input" id="f-name" type="text" autocomplete="off" aria-describedby="e-name">
+                        <p class="field-error" id="e-name"></p>
+                    </div>
+
+                    <div class="field span-2">
+                        <label for="f-wiki">Wikipedia link <span class="hint">(optional)</span></label>
+                        <input class="input" id="f-wiki" type="url" placeholder="https://en.wikipedia.org/wiki/…"
+                            aria-describedby="e-wiki">
+                        <p class="field-error" id="e-wiki"></p>
+                    </div>
+
+                    <div class="field span-2">
+                        <label for="f-nat">Nationality</label>
+                        <div class="nat-row">
+                            <img class="flag" id="flagPreview" alt="">
+                            <select class="input" id="f-nat"></select>
+                        </div>
+                    </div>
+
+                    <div class="field span-2">
+                        <label for="f-team">Team</label>
+                        <select class="input" id="f-team"></select>
+                    </div>
+
+                    <div class="field span-2" id="engineField">
+                        <label for="f-engine">Engine <span class="hint">(set by the team)</span></label>
+                        <input class="input" id="f-engine" type="text" readonly tabindex="-1">
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-foot">
+                <button type="button" class="btn-admin" id="cancelBtn">Cancel</button>
+                <button type="submit" class="btn-admin primary" id="saveBtn">Save driver</button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- Delete confirmation -->
+    <dialog class="modal" id="deleteDialog" aria-labelledby="deleteTitle">
+        <div class="modal-head">
+            <h2 id="deleteTitle">Delete driver?</h2>
+        </div>
+        <div class="modal-body">
+            <p id="deleteText"></p>
+        </div>
+        <div class="modal-foot">
+            <button type="button" class="btn-admin" id="deleteCancel">Cancel</button>
+            <button type="button" class="btn-admin danger" id="deleteConfirm">Delete driver</button>
+        </div>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">
+        <span id="toastMsg"></span>
+        <button type="button" id="toastAction" hidden>Undo</button>
+    </div>
+</body>
+
+</html>
