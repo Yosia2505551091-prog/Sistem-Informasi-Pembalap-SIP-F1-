@@ -18,6 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
         initTableSearch('.reserve-table', '🔍 Search reserves by team, driver, or nationality...');
     }
 
+    if (document.querySelector('.standings-table')) {
+        initTableSearch('.standings-table', '🔍 Search by name, team, or number...');
+    }
+
     if (document.querySelector('.fulltime-table')) {
         initTableSearch('.fulltime-table', '🔍 Search drivers, teams, or nationality...');
     }
@@ -100,7 +104,10 @@ function initTableSearch(tableSelector, placeholder) {
     const tables = document.querySelectorAll(tableSelector);
 
     tables.forEach(table => {
-        if (table.parentElement.classList.contains('search-wrapper')) return;
+        // Tables inside a horizontal scroller keep the search box outside it
+        const anchor = table.closest('.table-scroll') || table;
+
+        if (anchor.parentElement.classList.contains('search-wrapper')) return;
 
         const wrapper = document.createElement('div');
         wrapper.className = 'search-wrapper';
@@ -111,9 +118,9 @@ function initTableSearch(tableSelector, placeholder) {
         input.placeholder = placeholder;
         input.setAttribute('aria-label', 'Search table');
 
-        table.parentNode.insertBefore(wrapper, table);
+        anchor.parentNode.insertBefore(wrapper, anchor);
         wrapper.appendChild(input);
-        wrapper.appendChild(table);
+        wrapper.appendChild(anchor);
 
         input.addEventListener('input', () => {
             const query = input.value.toLowerCase().trim();
