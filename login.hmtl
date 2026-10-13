@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Formula 1 2026 — Admin Sign In</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin.css">
+    <script src="login.js" defer></script>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="index.html">Main Page</a>
+            <a href="fulltime.html">Full Time Entries</a>
+            <a href="reserves.html">Reserves Entries</a>
+            <a href="tracks.html">Tracks</a>
+            <a href="login.html" class="active">Admin</a>
+        </nav>
+    </header>
+
+    <main class="login">
+        <div class="gantry" aria-hidden="true">
+            <span class="light"></span>
+            <span class="light"></span>
+            <span class="light"></span>
+            <span class="light"></span>
+            <span class="light"></span>
+        </div>
+
+        <div class="login-card">
+            <h1>Admin sign in</h1>
+            <p class="login-sub">Manage the 2026 driver lineup.</p>
+
+            <p class="form-banner" id="banner" role="status" hidden></p>
+
+            <form id="loginForm" novalidate>
+                <div class="field">
+                    <label for="username">Username</label>
+                    <input class="input" id="username" name="username" type="text" autocomplete="username"
+                        autofocus aria-describedby="username-error">
+                    <p class="field-error" id="username-error"></p>
+                </div>
+
+                <div class="field">
+                    <label for="password">Password</label>
+                    <div class="pw-wrap">
+                        <input class="input" id="password" name="password" type="password"
+                            autocomplete="current-password" aria-describedby="password-error">
+                        <button type="button" class="pw-toggle" id="pwToggle" aria-controls="password"
+                            aria-pressed="false">Show</button>
+                    </div>
+                    <p class="field-error" id="password-error"></p>
+                </div>
+
+                <button type="submit" class="btn-admin primary block" id="submitBtn">Sign in</button>
+            </form>
+
+            <p class="login-note">Demo mode: any username and password will sign you in.</p>
+            <a class="back-link" href="index.html">Back to the main page</a>
+        </div>
+    </main>
+</body>
+
+</html>
